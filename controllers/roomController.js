@@ -30,7 +30,7 @@ router.post('/new', async (req, res) => {
         const d = new Date()
         console.log(`${d.toLocaleString()}: Error creating a room`)
         console.log(err)
-        res.status(400)json({
+        res.status(400).json({
             message: 'Error creating room'
         })
     }
