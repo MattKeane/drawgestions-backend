@@ -7,6 +7,10 @@ const app = express()
 
 require('./db/db')
 
+// middleware
+
+app.use(express.json())
+
 const roomController = require('./controllers/roomController')
 app.use('/room', roomController)
 

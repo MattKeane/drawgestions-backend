@@ -1,6 +1,7 @@
 const express = require('express')
 
 const Room = require('../models/room')
+const User = require('../models/user')
 
 const router = express.Router()
 
@@ -12,7 +13,7 @@ router.get('/new', async (req, res) => {
             const randomChoice = Math.floor(Math.random() * 26)
             desiredAccessCode += alphabet[randomChoice]
             if (desiredAccessCode.length === 4) {
-                const checkCode = await Room.findOne({ accessCode: desiredAccessCode})
+                const checkCode = await Room.findOne({ accessCode: desiredAccessCode })
                 if (checkCode) {
                     desiredAccessCode = ''
                 } else {
@@ -31,6 +32,39 @@ router.get('/new', async (req, res) => {
         console.log(err)
         res.json({
             message: 'Error creating room'
+        })
+    }
+})
+
+router.post('/join', async (req, res) => {
+    try {
+        const roomToJoin = await Room.findOne({ accessCode: req.body.accessCode }).populate('users')
+        if (roomToJoin) {
+            if (roomToJoin.users.some(user => user.displayName === req.body.displayName)) {
+                res.json({
+                    message: 'Username already taken'
+                })
+            } else {
+                const newUser = await User.create({
+                    displayName: req.body.displayName
+                })
+                roomToJoin.users.push(newUser)
+                await roomToJoin.save()
+                res.json({
+                    message: 'User successfully created'
+                })
+            }
+        } else {
+            res.json({
+                message: 'Invalid room'
+            })
+        }
+    } catch (err) {
+        const d = new Date()
+        console.log(`${d.toLocaleString()}: Error joining room:`)
+        console.log(err)
+        res.json({
+            message: 'Error joining room'
         })
     }
 })
