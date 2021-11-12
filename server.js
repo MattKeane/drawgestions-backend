@@ -7,6 +7,9 @@ const app = express()
 
 require('./db/db')
 
+const roomController = require('./controllers/roomController')
+app.use('/room', roomController)
+
 app.get('/', (req, res) => {
     res.json({
         message: 'Route works!'
