@@ -14,11 +14,12 @@ app.use(express.json())
 const roomController = require('./controllers/roomController')
 app.use('/room', roomController)
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Route works!'
+app.all('*', (req, res) => {
+    res.status(404).json({
+        message: '404: Resource Not Found'
     })
 })
+
 
 app.listen(PORT, () => {
     const d = new Date()
