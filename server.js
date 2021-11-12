@@ -5,6 +5,8 @@ const { PORT } = process.env
 
 const app = express()
 
+require('./db/db')
+
 app.get('/', (req, res) => {
     res.json({
         message: 'Route works!'
