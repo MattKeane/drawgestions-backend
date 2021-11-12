@@ -2,10 +2,22 @@ const mongoose = require('mongoose')
 const User = require('./user')
 
 const roomSchema = new mongoose.Schema({
-    accessCode: String,
-    users: [User]
+    accessCode: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    createdAt: {
+        type: Date,
+        expires: 3600,
+        default: Date.now
+    }
 })
 
-const Room = mongoose.model('room', roomSchema)
+const Room = mongoose.model('Room', roomSchema)
 
 module.exports = Room
