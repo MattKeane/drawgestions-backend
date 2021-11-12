@@ -1,7 +1,10 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    displayName: String,
+    displayName: {
+        type: String,
+        required: true,
+    },
     createdAt: {
         type: Date,
         expires: 3600,
