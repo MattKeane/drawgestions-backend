@@ -5,7 +5,7 @@ const User = require('../models/user')
 
 const router = express.Router()
 
-router.get('/new', async (req, res) => {
+router.post('/new', async (req, res) => {
     try {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         let desiredAccessCode = ''
@@ -20,7 +20,7 @@ router.get('/new', async (req, res) => {
                     const createdRoom = await Room.create({
                         accessCode: desiredAccessCode,
                     })
-                    res.json({
+                    res.status(201).json({
                         accessCode: desiredAccessCode
                     })
                 }
@@ -30,7 +30,7 @@ router.get('/new', async (req, res) => {
         const d = new Date()
         console.log(`${d.toLocaleString()}: Error creating a room`)
         console.log(err)
-        res.json({
+        res.status(400)json({
             message: 'Error creating room'
         })
     }
@@ -55,7 +55,7 @@ router.post('/join', async (req, res) => {
                 })
             }
         } else {
-            res.json({
+            res.status(400).json({
                 message: 'Invalid room'
             })
         }
@@ -63,7 +63,7 @@ router.post('/join', async (req, res) => {
         const d = new Date()
         console.log(`${d.toLocaleString()}: Error joining room:`)
         console.log(err)
-        res.json({
+        res.status(400).json({
             message: 'Error joining room'
         })
     }
