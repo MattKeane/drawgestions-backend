@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const cors = require('cors')
 
 const { PORT } = process.env
 
@@ -10,6 +11,9 @@ require('./db/db')
 // middleware
 
 app.use(express.json())
+app.use(cors({
+    origin: 'http://localhost:3000'
+}))
 
 const roomController = require('./controllers/roomController')
 app.use('/room', roomController)
