@@ -36,27 +36,16 @@ router.post('/new', async (req, res) => {
     }
 })
 
-router.post('/join', async (req, res) => {
+router.get('/join/:accessCode', async (req, res) => {
     try {
-        const roomToJoin = await Room.findOne({ accessCode: req.body.accessCode }).populate('users')
+        const roomToJoin = await Room.findOne({ accessCode: req.params.accessCode })
         if (roomToJoin) {
-            if (roomToJoin.users.some(user => user.displayName === req.body.displayName)) {
-                res.json({
-                    message: 'Username already taken'
-                })
-            } else {
-                const newUser = await User.create({
-                    displayName: req.body.displayName
-                })
-                roomToJoin.users.push(newUser)
-                await roomToJoin.save()
-                res.json({
-                    message: 'User successfully created'
-                })
-            }
+            res.status(200).json({
+                accessCode: roomToJoin.accessCode
+            })
         } else {
             res.status(400).json({
-                message: 'Invalid room'
+                message: 'Invalid Access Code'
             })
         }
     } catch (err) {

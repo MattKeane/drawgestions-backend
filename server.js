@@ -18,6 +18,9 @@ app.use(cors({
 const roomController = require('./controllers/roomController')
 app.use('/room', roomController)
 
+const userController = require('./controllers/userController')
+app.use('/user', userController)
+
 app.all('*', (req, res) => {
     res.status(404).json({
         message: '404: Resource Not Found'
