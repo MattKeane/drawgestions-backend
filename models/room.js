@@ -9,13 +9,17 @@ const roomSchema = new mongoose.Schema({
     },
     users: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
     }],
     createdAt: {
         type: Date,
         expires: 3600,
-        default: Date.now
-    }
+        default: Date.now,
+    },
+    open: {
+        type: Boolean,
+        default: true,
+    },
 })
 
 const Room = mongoose.model('Room', roomSchema)
