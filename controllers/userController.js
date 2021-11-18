@@ -10,7 +10,8 @@ router.post('/new', async (req, res) => {
         if (roomToJoin) {
             if (roomToJoin.users.some(user => user.displayName === req.body.displayName)) {
                 res.json({
-                    message: 'Username already taken'
+                    message: 'Username already taken',
+                    joined: false,
                 })
             } else {
                 const newUser = await User.create({
@@ -24,12 +25,14 @@ router.post('/new', async (req, res) => {
                     message: 'User successfully created',
                     displayName: newUser.displayName,
                     accessCode: roomToJoin.accessCode,
+                    joined: true,
                     users,
                 })
             }
         } else {
             res.status(400).json({
-                message: 'Invalid room'
+                joined: false,
+                message: 'Invalid room',
             })
         }
     } catch (err) {
