@@ -38,10 +38,14 @@ router.post('/new', async (req, res) => {
 
 router.get('/join/:accessCode', async (req, res) => {
     try {
-        const roomToJoin = await Room.findOne({ accessCode: req.params.accessCode })
+        const roomToJoin = await Room
+            .findOne({ accessCode: req.params.accessCode })
+            .populate('users')
         if (roomToJoin) {
+            const users = roomToJoin.users.map(user => user.displayName)
             res.status(200).json({
-                accessCode: roomToJoin.accessCode
+                accessCode: roomToJoin.accessCode,
+                users,
             })
         } else {
             res.status(400).json({
