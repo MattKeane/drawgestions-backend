@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const http = require('http')
 const { Server } = require('socket.io')
+const Room = require('./models/room')
 
 const { PORT } = process.env
 
@@ -21,6 +22,21 @@ io.on('connection', socket => {
     })
     socket.on('message', (message, room) => {
         io.to(room).emit('message', message)
+    })
+    socket.on('start', async accessCode => {
+        try {
+            await Room.findOneAndUpdate({
+                accessCode,
+            },
+            {
+                open: false,
+            })
+            io.to(accessCode).emit('start')
+        } catch (err) {
+            const d = new Date()
+            console.log(`${d.toLocaleString()}: Error starting game`)
+            console.log(err)
+        }
     })
 })
 
