@@ -49,6 +49,12 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }))
 
+app.use((req, res, next) => {
+    // This makes socket.io available inside of all routes
+    req.io = io
+    next()
+})
+
 const roomController = require('./controllers/roomController')
 app.use('/room', roomController)
 

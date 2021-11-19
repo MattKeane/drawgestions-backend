@@ -21,7 +21,7 @@ router.post('/new', async (req, res) => {
                     roomToJoin.users.push(newUser)
                     await roomToJoin.save()
                     const users = roomToJoin.users.map(user => user.displayName)
-                    console.log(users)
+                    req.io.to(req.body.accessCode).emit('newPlayer', req.body.displayName)
                     res.status(201).json({
                         message: 'User successfully created',
                         displayName: newUser.displayName,
