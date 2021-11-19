@@ -8,25 +8,32 @@ router.post('/new', async (req, res) => {
     try {
         const roomToJoin = await Room.findOne({ accessCode: req.body.accessCode }).populate('users')
         if (roomToJoin) {
-            if (roomToJoin.users.some(user => user.displayName === req.body.displayName)) {
-                res.json({
-                    message: 'Username already taken',
-                    joined: false,
-                })
+            if (roomToJoin.open) {
+                if (roomToJoin.users.some(user => user.displayName === req.body.displayName)) {
+                    res.json({
+                        message: 'Username already taken',
+                        joined: false,
+                    })
+                } else {
+                    const newUser = await User.create({
+                        displayName: req.body.displayName
+                    })
+                    roomToJoin.users.push(newUser)
+                    await roomToJoin.save()
+                    const users = roomToJoin.users.map(user => user.displayName)
+                    console.log(users)
+                    res.status(201).json({
+                        message: 'User successfully created',
+                        displayName: newUser.displayName,
+                        accessCode: roomToJoin.accessCode,
+                        joined: true,
+                        users,
+                    })
+                }
             } else {
-                const newUser = await User.create({
-                    displayName: req.body.displayName
-                })
-                roomToJoin.users.push(newUser)
-                await roomToJoin.save()
-                const users = roomToJoin.users.map(user => user.displayName)
-                console.log(users)
-                res.status(201).json({
-                    message: 'User successfully created',
-                    displayName: newUser.displayName,
-                    accessCode: roomToJoin.accessCode,
-                    joined: true,
-                    users,
+                res.json({
+                    message: 'Room closed',
+                    joined: false,
                 })
             }
         } else {
