@@ -4,6 +4,7 @@ const cors = require('cors')
 const http = require('http')
 const { Server } = require('socket.io')
 const Room = require('./models/room')
+const User = require('./models/user')
 
 const { PORT } = process.env
 
@@ -17,12 +18,16 @@ const io = new Server(server, {
 })
 
 io.on('connection', socket => {
+    console.log('Socket connected: ', socket.id)
+
     socket.on('join', room => {
         socket.join(room)
     })
+
     socket.on('message', (message, room) => {
         io.to(room).emit('message', message)
     })
+
     socket.on('start', async accessCode => {
         try {
             await Room.findOneAndUpdate({
@@ -35,6 +40,23 @@ io.on('connection', socket => {
         } catch (err) {
             const d = new Date()
             console.log(`${d.toLocaleString()}: Error starting game`)
+            console.log(err)
+        }
+    })
+
+    socket.on('suggestion', async suggestion => {
+        try {
+            console.log(socket.id)
+            const user = await User.findOne({ socket: socket.id })
+            console.log(user)
+            if (user.suggestions.length < 3) {
+                user.suggestions.push(suggestion)
+                await user.save()
+                console.log(user)
+            }
+        } catch (err) {
+            const d = new Date()
+            console.log(`${d.toLocaleString()}: Error making suggestion`)
             console.log(err)
         }
     })
