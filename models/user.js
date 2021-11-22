@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
         type: Date,
         expires: 3600,
         default: Date.now
-    }
+    },
+    suggestions: [String],
 })
 
 const User = mongoose.model('User', userSchema)
