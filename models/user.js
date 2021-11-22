@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
         default: Date.now
     },
     suggestions: [String],
+    socket: String,
 })
 
 const User = mongoose.model('User', userSchema)
